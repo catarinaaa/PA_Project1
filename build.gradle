@@ -19,5 +19,15 @@ run {
 }
 
 
+repositories {
+   flatDir {
+       dirs 'libs'
+   }
+}
+
+dependencies {
+   compile name: 'javassist'
+}
+
 // Define the main class for the application
 mainClassName = 'FunctionalProfiler'
