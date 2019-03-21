@@ -23,11 +23,24 @@ repositories {
    flatDir {
        dirs 'libs'
    }
+	//mavenCentral()
 }
 
 dependencies {
    compile name: 'javassist'
 }
 
+/*dependencies {
+	compile 'org.javassist.javassist:3.24.1-GA'
+}*/
+configurations{
+	jar.archiveName = 'functionalProfiler.jar'
+}
+
+//TEM DE FUNCIONAR COM gradle compileJava build
+
+
 // Define the main class for the application
 mainClassName = 'FunctionalProfiler'
+
+
