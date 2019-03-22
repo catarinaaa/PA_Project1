@@ -1,3 +1,4 @@
+package ist.meic.pa.FunctionalProfiler;
 
 public class Test1{
   public static void test(Counter c1, Counter c2) {

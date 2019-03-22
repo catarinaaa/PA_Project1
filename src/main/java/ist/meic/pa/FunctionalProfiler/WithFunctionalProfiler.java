@@ -1,11 +1,14 @@
+package ist.meic.pa.FunctionalProfiler;
+
 import javassist.*;
 import java.lang.reflect.*;
 
-public class FunctionalProfiler {
-    public static void main(String[] args) throws Throwable {
+public class WithFunctionalProfiler {
+    public static void main(String[] args){
       try{
         Translator t = new MyTranslator();
         ClassPool pool = ClassPool.getDefault();
+       
         Loader cl = new Loader();
         cl.addTranslator(pool, t);
         cl.run(args[0], null);
@@ -28,7 +31,7 @@ public class FunctionalProfiler {
         /*Method mainMethod = Class.forName(args[0]).getMethod("main", String[].class);
         String[] params = null;
         mainMethod.invoke(null, (Object) params);*/
-      } catch (Exception e){
+      } catch (Throwable e){
           e.printStackTrace();
       }
     }
