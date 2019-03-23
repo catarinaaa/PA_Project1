@@ -41,6 +41,6 @@ configurations{
 
 
 // Define the main class for the application
-mainClassName = 'FunctionalProfiler'
+mainClassName = 'ist.meic.pa.FunctionalProfiler.WithFunctionalProfiler'
 
 

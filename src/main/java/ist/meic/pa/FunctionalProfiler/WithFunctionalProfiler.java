@@ -8,25 +8,40 @@ public class WithFunctionalProfiler {
       try{
         Translator t = new MyTranslator();
         ClassPool pool = ClassPool.getDefault();
-       
+
+        CtClass ctClassCounter = pool.makeClass("ist.meic.pa.FunctionalProfiler.CountReadsWrites");
+        CtField ctFieldReads = CtField.make("static java.util.Map readsMap = new java.util.HashMap();", ctClassCounter);
+        CtField ctFieldWrites = CtField.make("static java.util.Map writesMap = new java.util.HashMap();", ctClassCounter);
+        ctClassCounter.addField(ctFieldReads);
+        ctClassCounter.addField(ctFieldWrites);
+
+        CtMethod ctMethodAddRead = CtNewMethod.make("public static void addRead(java.lang.Object classname){" +
+                                            " if (!readsMap.containsKey($1)) {" +
+                                            "   Integer one = new Integer(1);" +
+                                            "   readsMap.put($1, one);" +
+                                            " }" +
+                                            " else {" +
+                                            "   Integer currentValue = readsMap.get($1);" +
+                                            "   Integer nextValueInt = currentValue+1;" +
+                                            "   readsMap.put($1, nextValueInt);" +
+                                            " }" +
+                                            " }", ctClassCounter);
+        ctClassCounter.addMethod(ctMethodAddRead);
+
+        CtMethod ctMethodPrint = CtNewMethod.make("public static void printCounters(){" +
+                                                  " System.out.println(readsMap.entrySet());"+
+                                                  "}", ctClassCounter);
+        ctClassCounter.addMethod(ctMethodPrint);
+
+        CtClass ctClass = pool.get(args[0]);
+        CtMethod ctMainMethod = ctClass.getDeclaredMethod("main");
+        String template = "{ ist.meic.pa.FunctionalProfiler.CountReadsWrites.printCounters(); }";
+        ctMainMethod.insertAfter(template);
+
+
         Loader cl = new Loader();
         cl.addTranslator(pool, t);
         cl.run(args[0], null);
-        /*CtClass ctClass = pool.get(args[0]);
-
-        CtMethod ctMainMethod = ctClass.getDeclaredMethod("main", String[].class);
-
-        ctMainMethod.instrument(
-          new ExprEditor(){
-            public void edit(ConstructorCall c) throws CannotCompileException{
-              System.out.println(c.getClassName());
-            }
-          }
-        );*/
-
-
-
-        //System.out.println(ctClass);
 
         /*Method mainMethod = Class.forName(args[0]).getMethod("main", String[].class);
         String[] params = null;
