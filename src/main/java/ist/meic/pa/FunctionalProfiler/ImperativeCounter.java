@@ -4,6 +4,7 @@ public class ImperativeCounter implements Counter {
   int i;
   ImperativeCounter(int start) {
       i = start;
+      System.out.println(i);
     }
   public int value() {
     return i;
