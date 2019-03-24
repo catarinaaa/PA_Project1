@@ -7,8 +7,6 @@ public class Test1{
   public static void main(String[] args){
     Counter ic = new ImperativeCounter(0);
     test(ic, ic.advance());
-    Counter fc = new FunctionalCounter(0);
-    test(fc, fc.advance());
     System.out.println("Hi");
   }
 }

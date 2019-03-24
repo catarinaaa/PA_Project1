@@ -4,52 +4,27 @@ import javassist.*;
 import java.lang.reflect.*;
 
 public class WithFunctionalProfiler {
-    public static void main(String[] args){
-      try{
-        Translator t = new MyTranslator();
-        ClassPool pool = ClassPool.getDefault();
 
-        CtClass ctClassCounter = pool.makeClass("ist.meic.pa.FunctionalProfiler.CountReadsWrites");
-        CtField ctFieldReads = CtField.make("static java.util.Map readsMap = new java.util.HashMap();", ctClassCounter);
-        CtField ctFieldWrites = CtField.make("static java.util.Map writesMap = new java.util.HashMap();", ctClassCounter);
-        ctClassCounter.addField(ctFieldReads);
-        ctClassCounter.addField(ctFieldWrites);
+  public static void main(String[] args){
+    try {
+      Translator t = new MyTranslator();
+      ClassPool pool = ClassPool.getDefault();
 
-        CtMethod ctMethodAddRead = CtNewMethod.make("public static void addRead(java.lang.Object classname){" +
-                                            " if (!readsMap.containsKey($1)) {" +
-                                            "   Integer one = new Integer(1);" +
-                                            "   readsMap.put($1, one);" +
-                                            " }" +
-                                            " else {" +
-                                            "   Integer currentValue = readsMap.get($1);" +
-                                            "   Integer nextValueInt = currentValue+1;" +
-                                            "   readsMap.put($1, nextValueInt);" +
-                                            " }" +
-                                            " }", ctClassCounter);
-        ctClassCounter.addMethod(ctMethodAddRead);
+      /* Add print to profiled program */
+      CtClass ctClass = pool.get(args[0]);
+      CtMethod ctMainMethod = ctClass.getDeclaredMethod("main");
+      String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().print(); }";
+      ctMainMethod.insertAfter(template);
 
-        CtMethod ctMethodPrint = CtNewMethod.make("public static void printCounters(){" +
-                                                  " System.out.println(readsMap.entrySet());"+
-                                                  "}", ctClassCounter);
-        ctClassCounter.addMethod(ctMethodPrint);
+      Loader cl = new Loader();
+      cl.addTranslator(pool, t);
+      System.out.println("Profiling starting...");
+      cl.run(args[0], null);
 
-        CtClass ctClass = pool.get(args[0]);
-        CtMethod ctMainMethod = ctClass.getDeclaredMethod("main");
-        String template = "{ ist.meic.pa.FunctionalProfiler.CountReadsWrites.printCounters(); }";
-        ctMainMethod.insertAfter(template);
-
-
-        Loader cl = new Loader();
-        cl.addTranslator(pool, t);
-        cl.run(args[0], null);
-
-        /*Method mainMethod = Class.forName(args[0]).getMethod("main", String[].class);
-        String[] params = null;
-        mainMethod.invoke(null, (Object) params);*/
-      } catch (Throwable e){
-          e.printStackTrace();
-      }
+    } catch (Throwable e){
+        e.printStackTrace();
     }
+  }
 }
 
 

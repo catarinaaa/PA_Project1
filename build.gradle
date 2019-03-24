@@ -20,19 +20,20 @@ run {
 
 
 repositories {
-   flatDir {
+   /*flatDir {
        dirs 'libs'
-   }
-	//mavenCentral()
+   }*/
+	mavenCentral()
 }
-
+/*
 dependencies {
    compile name: 'javassist'
+}*/
+
+dependencies {
+	compile 'org.javassist:javassist:3.24.1-GA'
 }
 
-/*dependencies {
-	compile 'org.javassist.javassist:3.24.1-GA'
-}*/
 configurations{
 	jar.archiveName = 'functionalProfiler.jar'
 }
