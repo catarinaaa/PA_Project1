@@ -2,6 +2,7 @@ package ist.meic.pa.FunctionalProfiler;
 
 import javassist.*;
 import java.lang.reflect.*;
+import java.util.Arrays;
 
 public class WithFunctionalProfiler {
 
@@ -19,7 +20,12 @@ public class WithFunctionalProfiler {
       Loader cl = new Loader();
       cl.addTranslator(pool, t);
       System.out.println("Profiling starting...");
-      cl.run(args[0], null);
+
+      if(args.length == 1) {
+        cl.run(args[0], null);
+      } else {
+        cl.run(args[0], Arrays.copyOfRange(args, 1, args.length));
+      }
 
     } catch (Throwable e){
         e.printStackTrace();
