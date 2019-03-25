@@ -33,8 +33,9 @@ public class MyTranslator implements Translator {
               } catch (CannotCompileException e){ e.printStackTrace();}
             }
 
-            else if(f.isWriter() && !equals_class) {
-             String template = "{ist.meic.pa.FunctionalProfiler.Log.getInstance().addWrite( \"%s\"); $_ = $proceed($$); }";
+            else if(f.isWriter() /*&& !equals_class*/) {
+             String template = "{if(!this.equals($0)) ist.meic.pa.FunctionalProfiler.Log.getInstance().addWrite( \"%s\"); " +
+             "System.out.println($0); $_ = $proceed($$); }";
              f.replace(String.format(template, f.getClassName()));
            }
           }
