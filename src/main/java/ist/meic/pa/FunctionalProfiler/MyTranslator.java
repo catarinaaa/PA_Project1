@@ -10,30 +10,42 @@ public class MyTranslator implements Translator {
   public void onLoad(ClassPool pool, String classname)
       throws NotFoundException, CannotCompileException
   {
-    System.out.println("Starting translation of " + classname + "...");
       CtClass ctClass = pool.get(classname);
-      if(ctClass.isInterface() || classname.equals("ist.meic.pa.FunctionalProfiler.Log")) /* change this*/
+      if(ctClass.isInterface() || classname.equals("ist.meic.pa.FunctionalProfiler.Log")) /* maybe change this*/
         return;
 
-      CtMethod[] ctMethods = ctClass.getDeclaredMethods();
+      /*CtMethod[] ctMethods = ctClass.getDeclaredMethods();
       CtConstructor[] ctConstructors = ctClass.getConstructors();
+*/
+      CtBehavior[] ctBehaviors = ctClass.getDeclaredBehaviors();
 
+      for(CtBehavior c : ctBehaviors) {
+        c.instrument(new ExprEditor() {
+          public void edit(FieldAccess f) throws CannotCompileException {
+            if (f.isReader() && !(f.getClassName().equals("java.lang.System"))){
+              String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().addRead($0.getClass().getName()); $_ = $proceed($$); }";
+              try{
+                f.replace(template);
+              } catch (CannotCompileException e){ e.printStackTrace();}
+            } else if(f.isWriter()) {
+             String template = "{if(!this.equals($0)) ist.meic.pa.FunctionalProfiler.Log.getInstance().addWrite( \"%s\"); $_ = $proceed($$); }";
+             f.replace(String.format(template, f.getClassName()));
+           }
+        })
+      }
+
+/*
       for(CtConstructor c : ctConstructors){
         c.instrument(new ExprEditor(){
           public void edit(FieldAccess f) throws CannotCompileException {
-            boolean equals_class = false;
-            try{
-              equals_class = f.getField().getDeclaringClass().equals(ctClass);
-            } catch (NotFoundException e){e.printStackTrace();}
             if (f.isReader() && !(f.getClassName().equals("java.lang.System"))){
               String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().addRead( \"%s\"); $_ = $proceed($$); }";
               try{
-                System.out.println("read detected in " + f.getClassName());
                 f.replace(String.format(template, f.getClassName()));
               } catch (CannotCompileException e){ e.printStackTrace();}
             }
 
-            else if(f.isWriter() /*&& !equals_class*/) {
+            else if(f.isWriter()) {
              String template = "{if(!this.equals($0)) ist.meic.pa.FunctionalProfiler.Log.getInstance().addWrite( \"%s\"); " +
              "System.out.println($0); $_ = $proceed($$); }";
              f.replace(String.format(template, f.getClassName()));
@@ -74,6 +86,7 @@ public class MyTranslator implements Translator {
             }
           }
         });
+        */
     }
   }
 
