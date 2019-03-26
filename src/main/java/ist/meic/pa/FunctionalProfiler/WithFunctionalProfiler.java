@@ -19,7 +19,9 @@ public class WithFunctionalProfiler {
 
       Loader cl = new Loader();
       cl.addTranslator(pool, t);
-      System.out.println("Profiling starting...");
+
+      /* Class that keeps reads and writes is loaded by parent loader, so that field accesses in this class aren't counted */
+      cl.delegateLoadingOf("ist.meic.pa.FunctionalProfiler.Log");
 
       if(args.length == 1) {
         cl.run(args[0], null);

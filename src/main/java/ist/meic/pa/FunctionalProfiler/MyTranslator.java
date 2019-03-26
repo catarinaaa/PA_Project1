@@ -11,7 +11,7 @@ public class MyTranslator implements Translator {
       throws NotFoundException, CannotCompileException
   {
       CtClass ctClass = pool.get(classname);
-      if(ctClass.isInterface() || classname.equals("ist.meic.pa.FunctionalProfiler.Log")) /* maybe change this*/
+      if(ctClass.isInterface())
         return;
 
       // create an instance of class Log
