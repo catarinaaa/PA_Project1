@@ -14,80 +14,32 @@ public class MyTranslator implements Translator {
       if(ctClass.isInterface() || classname.equals("ist.meic.pa.FunctionalProfiler.Log")) /* maybe change this*/
         return;
 
-      /*CtMethod[] ctMethods = ctClass.getDeclaredMethods();
-      CtConstructor[] ctConstructors = ctClass.getConstructors();
-*/
+      // create an instance of class Log
+      CtField f = CtField.make("private static ist.meic.pa.FunctionalProfiler.Log log = ist.meic.pa.FunctionalProfiler.Log.getInstance();", ctClass);
+      ctClass.addField(f);
+
       CtBehavior[] ctBehaviors = ctClass.getDeclaredBehaviors();
 
+      //iterates all methods and constructors in class looking for field accesses
       for(CtBehavior c : ctBehaviors) {
         c.instrument(new ExprEditor() {
           public void edit(FieldAccess f) throws CannotCompileException {
+            // if a read operation is found, add read with field class name to class Log
             if (f.isReader() && !(f.getClassName().equals("java.lang.System"))){
-              String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().addRead($0.getClass().getName()); $_ = $proceed($$); }";
-              try{
-                f.replace(template);
-              } catch (CannotCompileException e){ e.printStackTrace();}
+              String template = "{ log.addRead($0.getClass().getName()); $_ = $proceed($$); }";
+              f.replace(template);
+            // if a write operation is found, add write with field class name to class Log
             } else if(f.isWriter()) {
-             String template = "{if(!this.equals($0)) ist.meic.pa.FunctionalProfiler.Log.getInstance().addWrite( \"%s\"); $_ = $proceed($$); }";
-             f.replace(String.format(template, f.getClassName()));
+              String template = "{";
+              // ignore writes to initialize fields in constructors
+              if (c.getMethodInfo().isConstructor())
+                template += "if(!this.equals($0)) ";
+              template += " log.addWrite($0.getClass().getName()); $_ = $proceed($$); }";
+              f.replace(template);
            }
-        })
-      }
-
-/*
-      for(CtConstructor c : ctConstructors){
-        c.instrument(new ExprEditor(){
-          public void edit(FieldAccess f) throws CannotCompileException {
-            if (f.isReader() && !(f.getClassName().equals("java.lang.System"))){
-              String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().addRead( \"%s\"); $_ = $proceed($$); }";
-              try{
-                f.replace(String.format(template, f.getClassName()));
-              } catch (CannotCompileException e){ e.printStackTrace();}
-            }
-
-            else if(f.isWriter()) {
-             String template = "{if(!this.equals($0)) ist.meic.pa.FunctionalProfiler.Log.getInstance().addWrite( \"%s\"); " +
-             "System.out.println($0); $_ = $proceed($$); }";
-             f.replace(String.format(template, f.getClassName()));
-           }
-          }
+         }
         });
       }
-
-      for (CtMethod m : ctMethods){
-        m.instrument(new ExprEditor(){
-          public void edit(FieldAccess f) throws CannotCompileException {
-            if (f.isReader() && !(f.getClassName().equals("java.lang.System"))){
-              if (!f.getClassName().equals(classname)){
-                String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().addRead( \"%s\"); $_ = $proceed($$); }";
-                try{
-                  f.replace(String.format(template, f.getClassName()));
-                } catch (CannotCompileException e){ e.printStackTrace();}
-              }
-              else{     //evaluate in runtime in case it's a subclass
-                String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().addRead($0.getClass().getName()); $_ = $proceed($$); }";
-                try{
-                  f.replace(template);
-                } catch (CannotCompileException e){ e.printStackTrace();}
-              }
-            } else if(f.isWriter()) {
-              if (!f.getClassName().equals(classname)){
-                String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().addWrite( \"%s\"); $_ = $proceed($$); }";
-                try{
-                  f.replace(String.format(template, f.getClassName()));
-                } catch (CannotCompileException e){ e.printStackTrace();}
-              }
-              else{
-                String template = "{ ist.meic.pa.FunctionalProfiler.Log.getInstance().addWrite($0.getClass().getName()); $_ = $proceed($$); }";
-                try{
-                  f.replace(template);
-                } catch (CannotCompileException e){ e.printStackTrace();}
-              }
-            }
-          }
-        });
-        */
     }
-  }
 
 }
