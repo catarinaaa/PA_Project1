@@ -72,7 +72,6 @@ public class Tests {
 		Student t = new Student();
 		new Professor().grade(t);
 		new Professor().grade(t);
-
 	}
 
 	static void test12() {
@@ -249,6 +248,7 @@ class Car{
 }
 
 class MyFakeFileWriter implements AutoCloseable {
+	@ist.meic.pa.FunctionalProfilerExtended.Exclude
 	String in;
 
 	MyFakeFileWriter(String filename) {

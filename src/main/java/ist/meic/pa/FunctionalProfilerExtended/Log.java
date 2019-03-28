@@ -32,7 +32,6 @@ public class Log {
 	* Increment number of reads made in class with classname
 	*/
 	public void addRead(String classname) {
-		System.out.println("->Read in " + classname +  " " + countReads.size());
 		if(countReads.containsKey(classname)) {
 			countReads.put(classname, countReads.get(classname)+1);
 		} else {
@@ -45,7 +44,6 @@ public class Log {
 	* Increment number of writes made in class with classname
 	*/
 	public void addWrite(String classname) {
-		System.out.println("->Write in " + classname +  " " + countReads.size());
 		if(countWrites.containsKey(classname)) {
 			countWrites.put(classname, countWrites.get(classname)+1);
 		} else {
@@ -78,8 +76,11 @@ public class Log {
 			else
 				countOutsideClassWrite.get(classname).put(fieldname, 1);
 		}
-		else
-			countOutsideClassWrite.put(classname, new TreeMap<String, Integer>());
+		else{
+			TreeMap<String, Integer> m = new TreeMap<String, Integer>();
+			m.put(fieldname, 1);
+			countOutsideClassWrite.put(classname, m);
+		}
 	}
 
 
