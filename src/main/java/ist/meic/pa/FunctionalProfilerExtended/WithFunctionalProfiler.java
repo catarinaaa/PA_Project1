@@ -1,7 +1,6 @@
 package ist.meic.pa.FunctionalProfilerExtended;
 
 import javassist.*;
-import java.lang.reflect.*;
 import java.util.Arrays;
 
 public class WithFunctionalProfiler {
@@ -34,27 +33,3 @@ public class WithFunctionalProfiler {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-/*expected output com estes espaços::
-
-Total reads: 0 Total writes: 1
-*nameOfPackage*.Student -> reads: 0 writes: 1
-
-
-class Professor{
-  public Professor(Student t){
-    t.mark = 15;                //this field access counts because it is the field of another instance
-    this.course = "PA";         // this doesn't count because I'm initializing the field of this instance
-    System.out.println(this.course); //read counts
-}
-}
-
-*/

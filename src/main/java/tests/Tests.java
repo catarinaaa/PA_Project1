@@ -9,11 +9,11 @@ public class Tests {
 			System.err.println("Usage: Tests test1 ... testn");
 			System.exit(1);
 		}
-		
+
 		for (String test : args) {
 			try {
 				Method m = Tests.class.getDeclaredMethod(test);
-				m.invoke(null);	
+				m.invoke(null);
 			} catch(InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
 				// Should not happen
 				System.out.println("Test method does not exist: " + test);
@@ -67,7 +67,7 @@ public class Tests {
 	static void test10() {
 		new Student();
 	}
- 
+
 	static void test11() {
 		Student t = new Student();
 		new Professor().grade(t);
@@ -86,7 +86,7 @@ public class Tests {
 
 	static void test13() {
 		Professor p = new Professor();
-		p.grade(new StudentPAva()); 
+		p.grade(new StudentPAva());
 	}
 
 	static void test14() {
@@ -106,7 +106,7 @@ public class Tests {
 	static void test17() {
 		try(MyFakeFileWriter in = new MyFakeFileWriter("WingardiumLeviosa_ForBeginners.pdf")) {
 			in.readLine();
-		} catch(IOException e) { 
+		} catch(IOException e) {
 			// Do you really think a fake file writer is so powerful that would throw an exception ? O:
 		}
 	}
@@ -115,9 +115,10 @@ public class Tests {
 		for (int i = 1; i < 18; i++) {
 			try {
 				Method m = Tests.class.getDeclaredMethod("test" + i);
-				m.invoke(null);	
+				m.invoke(null);
 			} catch(InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
 				// Should not happen
+				e.printStackTrace();
 				System.out.println("Test method does not exist: test" + i);
 			}
 		}
@@ -151,7 +152,7 @@ class Person {
 		return this.firstname + " " + this.surname;
 	}
 
-	void switchName(String name) { 
+	void switchName(String name) {
 		this.firstname = name;
 	}
 
@@ -161,7 +162,7 @@ class Person {
 }
 
 class Professor extends Person {
-	
+
 	void grade(Student t) {
 		t.mark = 20;
 		t.addFavorite(this);
@@ -216,13 +217,13 @@ class Car{
 	static class Motor {
 		boolean on;
 		int maxSpeed;
-		
+
 		Motor(Car c) {
 		    on = false;
 		    maxSpeed = c.maxSpeed;
 		    c.maxSpeed = 200;
 		}
-		
+
 		private void turnOn() {
 		    on = true;
 		    maxSpeed *= 2;
@@ -236,7 +237,7 @@ class Car{
 	}
 
 	Car() {
-		this.maxSpeed = 20; 
+		this.maxSpeed = 20;
 		this.fuelCapacity = 6;
 
 		new Motor(this).turnOn();
@@ -248,11 +249,10 @@ class Car{
 }
 
 class MyFakeFileWriter implements AutoCloseable {
-	@ist.meic.pa.FunctionalProfilerExtended.Exclude
 	String in;
 
-	MyFakeFileWriter(String filename) { 
-		this.in += filename; 
+	MyFakeFileWriter(String filename) {
+		this.in += filename;
 		String s = "Opening file this.filename"; // Oops! What now?
 	}
 
@@ -263,5 +263,5 @@ class MyFakeFileWriter implements AutoCloseable {
 	@Override
 	public void close() throws IOException {
 		this.in = "";
-	}	
+	}
 }

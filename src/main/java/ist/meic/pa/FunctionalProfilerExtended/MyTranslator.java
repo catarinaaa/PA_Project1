@@ -25,24 +25,31 @@ public class MyTranslator implements Translator {
 
 	      	if(c.hasAnnotation("ist.meic.pa.FunctionalProfilerExtended.Exclude"))
 	      		continue;
-	
+
 	        c.instrument(new ExprEditor() {
 	        	public void edit(FieldAccess f) throws CannotCompileException {
 	        		// if a read operation is found, add read with field class name to class Log
 	        		try {
-			            if (f.isReader() && !(f.getClassName().equals("java.lang.System")) && 
+			            if (f.isReader() && !(f.getClassName().equals("java.lang.System")) &&
 			            	!f.getField().hasAnnotation("ist.meic.pa.FunctionalProfilerExtended.Exclude")){
-			              	String template = "{ log.addRead($0.getClass().getName()); $_ = $proceed($$); }";
-			              	f.replace(template);
+                      String template = "{";
+                      if (!f.getField().getDeclaringClass().getName().equals(classname)){
+                        template += "log.addReadOutsideFieldClass(\"%s\",\"%s\");";
+                      }
+			              	template += " log.addRead($0.getClass().getName()); $_ = $proceed($$); }";
+			              	f.replace(String.format(template, f.getFieldName(), f.getField().getDeclaringClass().getName()));
 		            	}
 			            // if a write operation is found, add write with field class name to class Log
 			            if(f.isWriter() && !f.getField().hasAnnotation("ist.meic.pa.FunctionalProfilerExtended.Exclude")) {
 			            	String template = "{";
+                    if (!f.getField().getDeclaringClass().getName().equals(classname)){
+                      template += "log.addWriteOutsideFieldClass(\"%s\", \"%s\");";
+                    }
 			            	// ignore writes to initialize fields in constructors
 			            	if (c.getMethodInfo().isConstructor())
 			                	template += "if(!this.equals($0)) ";
 			            	template += " log.addWrite($0.getClass().getName()); $_ = $proceed($$); }";
-			            	f.replace(template);
+			            	f.replace(String.format(template, f.getFieldName(), f.getField().getDeclaringClass().getName()));
 			            }
 		            } catch (NotFoundException e) {e.printStackTrace();}
 		        }
