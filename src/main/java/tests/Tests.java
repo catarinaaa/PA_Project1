@@ -248,6 +248,7 @@ class Car{
 }
 
 class MyFakeFileWriter implements AutoCloseable {
+	@ist.meic.pa.FunctionalProfilerExtended.Exclude
 	String in;
 
 	MyFakeFileWriter(String filename) { 

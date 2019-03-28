@@ -1,4 +1,4 @@
-package ist.meic.pa.FunctionalProfiler;
+package ist.meic.pa.FunctionalProfilerExtended;
 
 import java.util.Collection;
 import java.util.Map;
@@ -71,4 +71,5 @@ public class Log {
 				" writes: " + countWrites.get(el.getKey()));
 		}
 	}
+
 }
