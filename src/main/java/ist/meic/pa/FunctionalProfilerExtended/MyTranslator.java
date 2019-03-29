@@ -30,7 +30,7 @@ public class MyTranslator implements Translator {
 	        	public void edit(FieldAccess f) throws CannotCompileException {
 	        		// if a read operation is found, add read with field class name to class Log
 	        		try {
-			            if (f.isReader() && !(f.getClassName().equals("java.lang.System")) &&
+			            if (!f.isStatic() && f.isReader() && !(f.getClassName().equals("java.lang.System")) &&
 			            	!f.getField().hasAnnotation("ist.meic.pa.FunctionalProfilerExtended.Exclude")){
                       String template = "{";
                       if (!f.getField().getDeclaringClass().getName().equals(classname)){
@@ -40,7 +40,7 @@ public class MyTranslator implements Translator {
 			              	f.replace(String.format(template, f.getFieldName(), f.getField().getDeclaringClass().getName()));
 		            	}
 			            // if a write operation is found, add write with field class name to class Log
-			            if(f.isWriter() && !f.getField().hasAnnotation("ist.meic.pa.FunctionalProfilerExtended.Exclude")) {
+			            if(!f.isStatic() && f.isWriter() && !f.getField().hasAnnotation("ist.meic.pa.FunctionalProfilerExtended.Exclude")) {
 			            	String template = "{";
                     if (!f.getField().getDeclaringClass().getName().equals(classname)){
                       template += "log.addWriteOutsideFieldClass(\"%s\", \"%s\");";

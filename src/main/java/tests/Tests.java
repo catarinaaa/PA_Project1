@@ -16,6 +16,7 @@ public class Tests {
 				m.invoke(null);
 			} catch(InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
 				// Should not happen
+				e.printStackTrace();
 				System.out.println("Test method does not exist: " + test);
 			}
 		}
@@ -248,7 +249,6 @@ class Car{
 }
 
 class MyFakeFileWriter implements AutoCloseable {
-	@ist.meic.pa.FunctionalProfilerExtended.Exclude
 	String in;
 
 	MyFakeFileWriter(String filename) {

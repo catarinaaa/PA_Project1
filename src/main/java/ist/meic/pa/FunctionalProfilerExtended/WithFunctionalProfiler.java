@@ -18,15 +18,14 @@ public class WithFunctionalProfiler {
 
       Loader cl = new Loader();
       cl.addTranslator(pool, t);
-
       /* Class that keeps reads and writes is loaded by parent loader, so that field accesses in this class aren't counted */
       cl.delegateLoadingOf("ist.meic.pa.FunctionalProfilerExtended.Log");
 
-      if(args.length == 1) {
+      if(args.length == 1)
         cl.run(args[0], null);
-      } else {
+      else
         cl.run(args[0], Arrays.copyOfRange(args, 1, args.length));
-      }
+
 
     } catch (Throwable e){
         e.printStackTrace();

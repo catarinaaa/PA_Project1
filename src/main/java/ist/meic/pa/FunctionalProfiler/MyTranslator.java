@@ -25,11 +25,11 @@ public class MyTranslator implements Translator {
         c.instrument(new ExprEditor() {
           public void edit(FieldAccess f) throws CannotCompileException {
             // if a read operation is found, add read with field class name to class Log
-            if (f.isReader() && !(f.getClassName().equals("java.lang.System"))){
+            if (!f.isStatic() && f.isReader() && !(f.getClassName().equals("java.lang.System"))){
               String template = "{ log.addRead($0.getClass().getName()); $_ = $proceed($$); }";
               f.replace(template);
             // if a write operation is found, add write with field class name to class Log
-            } else if(f.isWriter()) {
+          } else if(!f.isStatic() && f.isWriter()) {
               String template = "{";
               // ignore writes to initialize fields in constructors
               if (c.getMethodInfo().isConstructor())
