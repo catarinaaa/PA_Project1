@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /*
-* Class that keeps two maps that count reads and writes
-*/
+ * Class singleton that increment and store the counters using two TreeMaps
+ */
 public class Log {
 
 	private TreeMap<String, Integer> countReads = new TreeMap<String, Integer>();
